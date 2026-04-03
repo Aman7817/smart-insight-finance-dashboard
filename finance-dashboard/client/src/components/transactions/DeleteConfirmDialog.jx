@@ -1,0 +1,55 @@
+import { useTransactions } from "../../context/TransactionContext";
+import { useUI } from "../../context/UIContext";
+
+export default function DeleteConfirmDialog() {
+  const { deleteTransaction } = useTransactions();
+  const { darkMode, deleteConfirm, closeDeleteConfirm, showToast } = useUI();
+  const { open, transactionId, description } = deleteConfirm;
+
+  if (!open) return null;
+
+  const handleConfirm = () => {
+    deleteTransaction(transactionId);
+    showToast("Transaction deleted", "error");
+    closeDeleteConfirm();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeDeleteConfirm} />
+      <div
+        className={`relative w-full max-w-sm rounded-2xl shadow-2xl p-6 ${
+          darkMode ? "bg-[#111827] border border-white/10" : "bg-white border border-gray-100"
+        }`}
+      >
+        <div className="flex flex-col items-center text-center">
+          <div className="w-14 h-14 rounded-2xl bg-rose-500/15 flex items-center justify-center text-3xl mb-4">
+            🗑️
+          </div>
+          <h3 className={`font-bold text-lg mb-1 ${darkMode ? "text-white" : "text-gray-900"}`}>
+            Delete Transaction?
+          </h3>
+          <p className={`text-sm mb-6 ${darkMode ? "text-white/45" : "text-gray-500"}`}>
+            "<span className="font-semibold">{description}</span>" will be permanently removed.
+          </p>
+          <div className="flex gap-3 w-full">
+            <button
+              onClick={closeDeleteConfirm}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                darkMode ? "bg-white/5 text-white/60 hover:bg-white/10" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirm}
+              className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-rose-600 hover:bg-rose-500 active:scale-95 transition-all"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
